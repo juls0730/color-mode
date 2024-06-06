@@ -2,7 +2,7 @@ import { reactive, ref } from 'vue'
 
 import type { ColorModeInstance } from './types'
 import { defineNuxtPlugin, isVue2, isVue3, useHead, useState, useRouter, useRequestHeaders } from '#imports'
-import { preference, hid, script, dataValue, storage, storageKey } from '#color-mode-options'
+import { preference, hid, script, dataValue, storage, storageKey, classPrefix, classSuffix } from '#color-mode-options'
 
 const addScript = (head) => {
   head.script = head.script || []
@@ -55,10 +55,23 @@ export default defineNuxtPlugin((nuxtApp) => {
           // on values that arent system
           colorMode.value = value
           colorMode.unknown = false
+          
+          const classNmae = `${classPrefix}${value}${classSuffix}`
+    
+          if (htmlAttrs["class"]) {
+            htmlAttrs["class"] += ` ${classNmae}`
+          } else {
+            htmlAttrs["class"] = `${classNmae}`
+          }
+    
+          if (dataValue) {
+            htmlAttrs[`data-${dataValue}`] = colorMode.value
+          }
         }
 
         colorMode.preference = value
       }
+
     }
     useHead({ htmlAttrs })
   }
